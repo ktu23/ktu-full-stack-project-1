@@ -30,7 +30,11 @@ const router = express.Router()
 // INDEX
 // GET /jokes
 router.get('/jokes', requireToken, (req, res, next) => {
-  Jokes.find()
+  // Jokes.find()
+  Jokes.find({
+    owner: req.user._id
+  })
+    .populate('owner')
     // respond with status 200 and JSON of the jokes
     .then(jokes => res.status(200).json({ jokes: jokes }))
     // if an error occurs, pass it to the handler
@@ -53,8 +57,13 @@ router.get('/jokes/:id', requireToken, (req, res, next) => {
 // POST /jokes
 router.post('/jokes', requireToken, (req, res, next) => {
   // set owner of new joke to be current user
+  // req.body.joke.owner = req.user.id
+  // req.body.joke.owner = 'potato'
+  // console.log(req.body.joke)
+  console.log(req.body)
   req.body.joke.owner = req.user.id
 
+  // Jokes.create(req.body.joke)
   Jokes.create(req.body.joke)
     // respond to succesful `create` with status 201 and JSON of new "joke"
     .then(joke => {
@@ -71,6 +80,7 @@ router.post('/jokes', requireToken, (req, res, next) => {
 router.patch('/jokes/:id', requireToken, removeBlanks, (req, res, next) => {
   // if the client attempts to change the `owner` property by including a new
   // owner, prevent that by deleting that key/value pair
+  console.log('jokes body', req.body)
   delete req.body.joke.owner
 
   Jokes.findById(req.params.id)
