@@ -98,6 +98,7 @@ router.patch('/jokes/:id', requireToken, removeBlanks, (req, res, next) => {
 // DESTROY
 // DELETE /jokes/5a7db6c74d55bc51bdf39793
 router.delete('/jokes/:id', requireToken, (req, res, next) => {
+  console.log('test')
   Jokes.findById(req.params.id)
     .then(handle404)
     // ensure the signed in user (req.user.id) is the same as the joke's owner (joke.owner)
